@@ -1,0 +1,9 @@
+package com.github.alonwang.beans.core;
+
+public class Assert {
+    public static void notNull(Object object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+}
