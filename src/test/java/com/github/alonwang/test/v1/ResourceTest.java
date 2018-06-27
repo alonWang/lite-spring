@@ -1,5 +1,6 @@
 package com.github.alonwang.test.v1;
 
+import cn.hutool.core.io.FileUtil;
 import com.github.alonwang.beans.core.ClassPathResource;
 import com.github.alonwang.beans.core.FileSystemResource;
 import com.github.alonwang.beans.core.Resource;
@@ -33,7 +34,7 @@ public class ResourceTest {
 
     @Test
     public void testFileSystemResource() {
-        Resource resource = new FileSystemResource("E:\\Repo\\lite-spring\\src\\test\\resources\\petStore-v1.xml");
+        Resource resource = new FileSystemResource(FileUtil.getAbsolutePath("petStore-v1.xml"));
         InputStream is = null;
         try {
             is = resource.getInputStream();
