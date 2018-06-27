@@ -1,6 +1,7 @@
 package com.github.alonwang.test.v1;
 
 import com.github.alonwang.beans.BeanDefinition;
+import com.github.alonwang.beans.core.ClassPathResource;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.exception.general.BeanDefinitionStoreException;
 import com.github.alonwang.beans.factory.support.DefaultBeanFactory;
@@ -25,7 +26,7 @@ public class BeanFactoryTest {
 
     @Test
     public void testGetBean() {
-        reader.loadBeanDefinitions("petStore-v1.xml");
+        reader.loadBeanDefinitions(new ClassPathResource("petStore-v1.xml"));
         BeanDefinition bd = factory.getBeanDefinition("petStore");
         assertEquals("com.github.alonwang.service.v1.PetStoreService",
                 bd.getBeanClassName());
@@ -37,7 +38,7 @@ public class BeanFactoryTest {
 
     @Test
     public void testInvalidBean() {
-        reader.loadBeanDefinitions("petStore-v1.xml");
+        reader.loadBeanDefinitions(new ClassPathResource("petStore-v1.xml"));
         try {
             factory.getBean("xxx");
         } catch (BeanCreationException e) {
@@ -49,7 +50,7 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidXML() {
         try {
-            reader.loadBeanDefinitions("xxx.xml");
+            reader.loadBeanDefinitions(new ClassPathResource("xxx.xml"));
         } catch (BeanDefinitionStoreException e) {
             return;
         }
