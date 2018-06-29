@@ -14,6 +14,7 @@ import java.io.InputStream;
 public class XmlBeanDefinitionReader {
     private static final String ID_ATTRIBUTE = "id";
     private static final String CLASS_ATTRIBUTE = "class";
+    public static final String SCOPE_ATTRIBUTE = "scope";
     private BeanDefinitionRegistry registry;
 
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -31,9 +32,12 @@ public class XmlBeanDefinitionReader {
                 Element element = (Element) obj;
                 String id = element.attributeValue(ID_ATTRIBUTE);
                 String beanClassName = element.attributeValue(CLASS_ATTRIBUTE);
-                BeanDefinition beanDefinition = new GeneralBeanDefinition(id,
+                BeanDefinition bd = new GeneralBeanDefinition(id,
                         beanClassName);
-                this.registry.registerBeanDefinition(id, beanDefinition);
+                if (element.attribute(SCOPE_ATTRIBUTE) != null) {
+                    bd.setScope(element.attributeValue(SCOPE_ATTRIBUTE));
+                }
+                this.registry.registerBeanDefinition(id, bd);
             }
         } catch (Exception e) {
             throw new BeanDefinitionStoreException(

@@ -12,7 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BeanFactoryTest {
     private DefaultBeanFactory factory;
@@ -28,12 +30,17 @@ public class BeanFactoryTest {
     public void testGetBean() {
         reader.loadBeanDefinitions(new ClassPathResource("petStore-v1.xml"));
         BeanDefinition bd = factory.getBeanDefinition("petStore");
+        assertTrue(bd.isSingleton());
+        assertFalse(bd.isPrototype());
+        assertEquals(BeanDefinition.SCOPE_SINGLETON, bd.getScope());
         assertEquals("com.github.alonwang.service.v1.PetStoreService",
                 bd.getBeanClassName());
 
         PetStoreService petStoreService = (PetStoreService) factory
                 .getBean("petStore");
         assertNotNull(petStoreService);
+        PetStoreService petStoreService1 = (PetStoreService) factory.getBean("petStore");
+        assertEquals(petStoreService, petStoreService1);
     }
 
     @Test

@@ -9,7 +9,7 @@ import com.github.alonwang.util.ClassUtils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>(
             64);
     private ClassLoader beanClassLoader;
@@ -36,12 +36,24 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
     }
 
     public Object getBean(String beanID) {
-        BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanID);
-        if (beanDefinition == null) {
+        BeanDefinition bd = this.beanDefinitionMap.get(beanID);
+        if (bd == null) {
             throw new BeanCreationException("Bean Definition does not exist");
         }
+        if (bd.isSingleton()) {
+            Object bean = this.getSingleton(beanID);
+            if (bean == null) {
+                bean = createBean(bd);
+                this.registerSingleton(beanID, bean);
+            }
+            return bean;
+        }
+        return createBean(bd);
+    }
+
+    private Object createBean(BeanDefinition bd) {
         ClassLoader cl = getBeanClassLoader();
-        String beanName = beanDefinition.getBeanClassName();
+        String beanName = bd.getBeanClassName();
         try {
             Class<?> clazz = cl.loadClass(beanName);
             return clazz.getDeclaredConstructor().newInstance();
