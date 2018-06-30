@@ -2,6 +2,8 @@ package com.github.alonwang.test.v2;
 
 import com.github.alonwang.context.ApplicationContext;
 import com.github.alonwang.context.ClassPathXmlApplicationContext;
+import com.github.alonwang.dao.v2.AccountDao;
+import com.github.alonwang.dao.v2.ItemDao;
 import com.github.alonwang.service.v2.PetStoreService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,5 +18,9 @@ public class ApplicationContextTestV2 {
         PetStoreService petStore = (PetStoreService) ctx.getBean("petStore");
         Assert.assertNotNull(petStore.getAccountDao());
         Assert.assertNotNull(petStore.getItemDao());
+
+        Assert.assertTrue(petStore.getAccountDao() instanceof AccountDao);
+        Assert.assertTrue(petStore.getItemDao() instanceof ItemDao);
+        Assert.assertEquals("王xx", petStore.getOwner());
     }
 }

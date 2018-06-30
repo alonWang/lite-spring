@@ -6,9 +6,9 @@
 
     <bean id="petStore"
           class="com.github.alonwang.service.v2.PetStoreService">
-
         <property name="accountDao" ref="accountDao"/>
         <property name="itemDao" ref="itemDao"/>
+        <property name="owner" value="王xx"/>
     </bean>
 
     <bean id="accountDao" class="com.github.alonwang.dao.v2.AccountDao">

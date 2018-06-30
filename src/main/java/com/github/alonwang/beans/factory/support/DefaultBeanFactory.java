@@ -2,10 +2,15 @@ package com.github.alonwang.beans.factory.support;
 
 import com.github.alonwang.beans.BeanDefinition;
 import com.github.alonwang.beans.BeanDefinitionRegistry;
+import com.github.alonwang.beans.PropertyValue;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import com.github.alonwang.util.ClassUtils;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,6 +57,42 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     }
 
     private Object createBean(BeanDefinition bd) {
+        Object bean = instantiateBean(bd);
+        populate(bd, bean);
+        return bean;
+
+    }
+
+    protected void populate(BeanDefinition bd, Object bean) {
+        List<PropertyValue> pvs = bd.getPropertyValues();
+
+        if (pvs == null || pvs.isEmpty()) {
+            return;
+        }
+        BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
+
+
+        for (PropertyValue pv : pvs) {
+            String propertyName = pv.getName();
+            Object originalValue = pv.getValue();
+            try {
+                Object resolvedValue = resolver.resolveValueIfNecessary(originalValue);
+                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+                PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+                for (PropertyDescriptor pd : pds) {
+                    if (pd.getName().equals(propertyName)) {
+                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeanClassName() + "]", e);
+            }
+        }
+
+    }
+
+    private Object instantiateBean(BeanDefinition bd) {
         ClassLoader cl = getBeanClassLoader();
         String beanName = bd.getBeanClassName();
         try {
@@ -62,4 +103,5 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
                     "Create bean for [" + beanName + "] failed", e);
         }
     }
+
 }
