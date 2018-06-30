@@ -17,5 +17,7 @@ public interface BeanDefinition {
 
     void setScope(String scope);
 
+    void addProperty(PropertyValue pv);
+
     List<PropertyValue> getPropertyValues();
 }

@@ -13,6 +13,7 @@ public class GeneralBeanDefinition implements BeanDefinition {
     private boolean prototype = false;
     private String scope = SCOPE_DEFAULT;
     private List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
+
     public GeneralBeanDefinition(String id, String beanClassName) {
         this.id = id;
         this.beanClassName = beanClassName;
@@ -38,6 +39,10 @@ public class GeneralBeanDefinition implements BeanDefinition {
         this.scope = scope;
         this.singleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.endsWith(scope);
         this.prototype = SCOPE_PROTOTYPE.equals(scope);
+    }
+
+    public void addProperty(PropertyValue pv) {
+        propertyValues.add(pv);
     }
 
     public List<PropertyValue> getPropertyValues() {

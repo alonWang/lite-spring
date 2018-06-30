@@ -7,6 +7,7 @@ import com.github.alonwang.beans.BeanDefinitionRegistry;
 import com.github.alonwang.beans.PropertyValue;
 import com.github.alonwang.beans.core.Resource;
 import com.github.alonwang.beans.exception.general.BeanDefinitionStoreException;
+import com.github.alonwang.beans.factory.TypedStringValue;
 import com.github.alonwang.beans.factory.config.RuntimeBeanReference;
 import com.github.alonwang.beans.factory.support.GeneralBeanDefinition;
 import org.apache.commons.logging.Log;
@@ -28,6 +29,7 @@ public class XmlBeanDefinitionReader {
     private static final String NAME_ATTRIBUTE = "name";
     private BeanDefinitionRegistry registry;
     protected final Log logger = LogFactory.getLog(getClass());
+
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry = registry;
     }
@@ -70,6 +72,7 @@ public class XmlBeanDefinitionReader {
             }
             Object val = parsePropertyValue(propEle, bd, propName);
             PropertyValue pv = new PropertyValue(propName, val);
+            bd.addProperty(pv);
         }
 
     }
@@ -87,7 +90,10 @@ public class XmlBeanDefinitionReader {
             RuntimeBeanReference ref = new RuntimeBeanReference(refName);
             return ref;
         } else if (hasValueAttribute) {
-
+            TypedStringValue valueHolder = new TypedStringValue(propEle.attributeValue(VALUE_ATTRIBUTE));
+            return valueHolder;
+        } else {
+            throw new RuntimeException(eleName + " must specify a ref or value");
         }
 
 
