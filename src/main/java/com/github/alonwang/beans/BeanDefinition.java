@@ -1,5 +1,7 @@
 package com.github.alonwang.beans;
 
+import java.util.List;
+
 public interface BeanDefinition {
     String getBeanClassName();
 
@@ -14,4 +16,6 @@ public interface BeanDefinition {
     String getScope();
 
     void setScope(String scope);
+
+    List<PropertyValue> getPropertyValues();
 }
