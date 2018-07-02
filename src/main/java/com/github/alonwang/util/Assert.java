@@ -1,4 +1,4 @@
-package com.github.alonwang.beans.core;
+package com.github.alonwang.util;
 
 public class Assert {
     public static void notNull(Object object, String message) {
