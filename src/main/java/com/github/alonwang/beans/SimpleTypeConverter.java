@@ -3,6 +3,7 @@ package com.github.alonwang.beans;
 import com.github.alonwang.beans.exception.TypeMismatchException;
 import com.github.alonwang.beans.propertyeditor.CustomBooleanEditor;
 import com.github.alonwang.beans.propertyeditor.CustomNumberEditor;
+import com.github.alonwang.util.ClassUtils;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
@@ -18,10 +19,24 @@ public class SimpleTypeConverter implements TypeConverter {
     }
 
     public <T> T convertIfNecessary(Object value, Class<T> requiredType) throws TypeMismatchException {
-        return null;
+        if (ClassUtils.isAssignableValue(requiredType, value)) {
+            return (T) value;
+        } else {
+            if (value instanceof String) {
+                PropertyEditor editor = findDefaultEditor(requiredType);
+                try {
+                    editor.setAsText((String) value);
+                } catch (IllegalArgumentException e) {
+                    throw new TypeMismatchException(value, requiredType);
+                }
+                return (T) editor.getValue();
+            } else {
+                throw new RuntimeException("Can't convert value for " + value + " class:" + requiredType);
+            }
+        }
     }
 
-    private PropertyEditor findDefaultPropertyEditor(Class<?> requiredType) {
+    private PropertyEditor findDefaultEditor(Class<?> requiredType) {
         if (defaultEditors == null) {
             createDefaultEditors();
         }
