@@ -3,6 +3,7 @@ package com.github.alonwang.beans.factory.support;
 import com.github.alonwang.beans.BeanDefinition;
 import com.github.alonwang.beans.BeanDefinitionRegistry;
 import com.github.alonwang.beans.PropertyValue;
+import com.github.alonwang.beans.SimpleTypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import com.github.alonwang.util.ClassUtils;
@@ -70,7 +71,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
             return;
         }
         BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
-
+        SimpleTypeConverter converter = new SimpleTypeConverter();
 
         for (PropertyValue pv : pvs) {
             String propertyName = pv.getName();
@@ -81,7 +82,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
                 PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
                     if (pd.getName().equals(propertyName)) {
-                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        Object convertedValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
+                        pd.getWriteMethod().invoke(bean, convertedValue);
                         break;
                     }
                 }
