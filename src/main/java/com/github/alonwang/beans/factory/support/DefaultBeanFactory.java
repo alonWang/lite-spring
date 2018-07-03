@@ -72,14 +72,14 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         }
         BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
         SimpleTypeConverter converter = new SimpleTypeConverter();
-
-        for (PropertyValue pv : pvs) {
-            String propertyName = pv.getName();
-            Object originalValue = pv.getValue();
-            try {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+            PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+            for (PropertyValue pv : pvs) {
+                String propertyName = pv.getName();
+                Object originalValue = pv.getValue();
                 Object resolvedValue = resolver.resolveValueIfNecessary(originalValue);
-                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-                PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+
                 for (PropertyDescriptor pd : pds) {
                     if (pd.getName().equals(propertyName)) {
                         Object convertedValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
@@ -87,10 +87,11 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
                         break;
                     }
                 }
-            } catch (Exception e) {
-                throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeanClassName() + "]", e);
             }
+        } catch (Exception e) {
+            throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeanClassName() + "]", e);
         }
+
 
     }
 
