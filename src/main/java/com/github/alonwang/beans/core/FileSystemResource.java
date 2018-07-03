@@ -1,5 +1,7 @@
 package com.github.alonwang.beans.core;
 
+import com.github.alonwang.util.Assert;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

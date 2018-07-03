@@ -1,7 +1,7 @@
 package com.github.alonwang.beans.factory.support;
 
-import com.github.alonwang.beans.core.Assert;
 import com.github.alonwang.beans.factory.SingletonBeanRegistry;
+import com.github.alonwang.util.Assert;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
