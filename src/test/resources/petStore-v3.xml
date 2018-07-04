@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="petStore" class="com.github.alonwang.service.v3.PetStoreService">
+        <constructor-arg ref="accountDao"/>
+        <constructor-arg ref="itemDao"/>
+        <constructor-arg value="1"/>
+    </bean>
+    <bean id="itemDao" class="com.github.alonwang.dao.v3.ItemDao"></bean>
+    <bean id="accountDao" class="com.github.alonwang.dao.v3.AccountDao"></bean>
+</beans>
