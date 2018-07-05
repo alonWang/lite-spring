@@ -4,6 +4,7 @@ import com.github.alonwang.beans.BeanDefinition;
 import com.github.alonwang.beans.BeanDefinitionRegistry;
 import com.github.alonwang.beans.PropertyValue;
 import com.github.alonwang.beans.SimpleTypeConverter;
+import com.github.alonwang.beans.TypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import com.github.alonwang.util.ClassUtils;
@@ -74,7 +75,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 		}
 		BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(
 				this);
-		SimpleTypeConverter converter = new SimpleTypeConverter();
+		TypeConverter converter = new SimpleTypeConverter();
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
 			PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
