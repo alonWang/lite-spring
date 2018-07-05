@@ -3,6 +3,7 @@ package com.github.alonwang.beans.factory.support;
 import com.github.alonwang.beans.BeanDefinition;
 import com.github.alonwang.beans.ConstructorArgument;
 import com.github.alonwang.beans.SimpleTypeConverter;
+import com.github.alonwang.beans.TypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import org.apache.commons.logging.Log;
@@ -38,7 +39,7 @@ public class ConstructorResolver {
 		BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(
 				this.beanFactory);
 		ConstructorArgument cargs = bd.getConstructArgument();
-		SimpleTypeConverter typeConverter = new SimpleTypeConverter();
+		TypeConverter typeConverter = new SimpleTypeConverter();
 
 		for (Constructor<?> candidate : candidates) {
 			Class<?>[] parameterTypes = candidate.getParameterTypes();
@@ -70,7 +71,7 @@ public class ConstructorResolver {
 	private boolean valuesMatchTypes(Class<?>[] parameterTypes,
 			List<ConstructorArgument.ValueHolder> valueHolders,
 			Object[] argsToUse, BeanDefinitionValueResolver valueResolver,
-			SimpleTypeConverter typeConverter) {
+			TypeConverter typeConverter) {
 		for (int i = 0; i < parameterTypes.length; i++) {
 			ConstructorArgument.ValueHolder valueHolder = valueHolders.get(i);
 			Object originalValue = valueHolder.getValue();
