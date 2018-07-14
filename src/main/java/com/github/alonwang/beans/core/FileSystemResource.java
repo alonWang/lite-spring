@@ -8,21 +8,26 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class FileSystemResource implements Resource {
-    private String path;
-    private File file;
+	private String path;
+	private File file;
 
-    public FileSystemResource(String path) {
-        Assert.notNull(path, "path can't be null");
-        this.file = new File(path);
-        this.path = path;
-    }
+	public FileSystemResource(File file) {
+		this.path = file.getPath();
+		this.file = file;
+	}
 
-    public InputStream getInputStream() throws IOException {
+	public FileSystemResource(String path) {
+		Assert.notNull(path, "path can't be null");
+		this.file = new File(path);
+		this.path = path;
+	}
 
-        return new FileInputStream(file);
-    }
+	public InputStream getInputStream() throws IOException {
 
-    public String getDescription() {
-        return "file:[" + file.getAbsolutePath() + "]";
-    }
+		return new FileInputStream(file);
+	}
+
+	public String getDescription() {
+		return "file:[" + file.getAbsolutePath() + "]";
+	}
 }
