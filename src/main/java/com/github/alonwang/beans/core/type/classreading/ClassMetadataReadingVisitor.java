@@ -1,11 +1,12 @@
 package com.github.alonwang.beans.core.type.classreading;
 
+import com.github.alonwang.beans.core.type.ClassMetadata;
 import com.github.alonwang.util.ClassUtils;
 import org.springframework.asm.ClassVisitor;
 import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 
-public class ClassMetadataReadingVisitor extends ClassVisitor {
+public class ClassMetadataReadingVisitor extends ClassVisitor implements ClassMetadata {
     private String className;
     private boolean isInterface;
     private boolean isAbstract;
@@ -51,6 +52,10 @@ public class ClassMetadataReadingVisitor extends ClassVisitor {
 
     public boolean isFinal() {
         return isFinal;
+    }
+
+    public boolean hasSuperClass() {
+        return !superClassName.equals("java.lang.Object");
     }
 
     public String getSuperClassName() {

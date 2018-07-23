@@ -1,6 +1,7 @@
 package com.github.alonwang.beans.core.type.classreading;
 
 import com.github.alonwang.beans.core.annotation.AnnotationAttributes;
+import com.github.alonwang.beans.core.type.AnnotationMetadata;
 import jdk.internal.org.objectweb.asm.Type;
 import org.springframework.asm.AnnotationVisitor;
 
@@ -9,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor {
+public class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
     private final Set<String> annotationSet = new LinkedHashSet<String>(4);
     private final Map<String, AnnotationAttributes> attributesMap = new LinkedHashMap<String, AnnotationAttributes>(4);
 
