@@ -1,6 +1,6 @@
 package com.github.alonwang.service.v4;
 
-import com.github.alonwang.beans.factory.annotation.Autowired;
+import com.github.alonwang.beans.core.annotation.Autowired;
 import com.github.alonwang.dao.v4.AccountDao;
 import com.github.alonwang.dao.v4.ItemDao;
 import com.github.alonwang.stereotype.Component;
