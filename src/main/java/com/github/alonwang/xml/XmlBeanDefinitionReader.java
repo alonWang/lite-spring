@@ -9,7 +9,7 @@ import com.github.alonwang.beans.core.Resource;
 import com.github.alonwang.beans.exception.general.BeanDefinitionStoreException;
 import com.github.alonwang.beans.factory.TypedStringValue;
 import com.github.alonwang.beans.factory.config.RuntimeBeanReference;
-import com.github.alonwang.beans.factory.support.GeneralBeanDefinition;
+import com.github.alonwang.beans.factory.support.GenericBeanDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -47,7 +47,7 @@ public class XmlBeanDefinitionReader {
 				Element ele = (Element) obj;
 				String id = ele.attributeValue(ID_ATTRIBUTE);
 				String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
-				BeanDefinition bd = new GeneralBeanDefinition(id,
+				BeanDefinition bd = new GenericBeanDefinition(id,
 						beanClassName);
 				if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
 					bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
