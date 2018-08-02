@@ -44,5 +44,19 @@ public class ClassPathBeanDefinitionScannerTest {
             AnnotationMetadata amd = sbd.getMetadata();
             Assert.assertTrue(amd.hasAnnotation(annotation));
         }
+		{
+			BeanDefinition bd = factory.getBeanDefinition("accountDao");
+			Assert.assertTrue(bd instanceof ScannedGenericBeanDefinition);
+			ScannedGenericBeanDefinition sbd = (ScannedGenericBeanDefinition) bd;
+			AnnotationMetadata amd = sbd.getMetadata();
+			Assert.assertTrue(amd.hasAnnotation(annotation));
+		}
+		{
+			BeanDefinition bd = factory.getBeanDefinition("itemDao");
+			Assert.assertTrue(bd instanceof ScannedGenericBeanDefinition);
+			ScannedGenericBeanDefinition sbd = (ScannedGenericBeanDefinition) bd;
+			AnnotationMetadata amd = sbd.getMetadata();
+			Assert.assertTrue(amd.hasAnnotation(annotation));
+		}
     }
 }

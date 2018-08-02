@@ -10,6 +10,7 @@ import com.github.alonwang.beans.exception.general.BeanDefinitionStoreException;
 import com.github.alonwang.beans.factory.TypedStringValue;
 import com.github.alonwang.beans.factory.config.RuntimeBeanReference;
 import com.github.alonwang.beans.factory.support.GenericBeanDefinition;
+import com.github.alonwang.context.annotation.ClassPathBeanDefinitionScanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -29,7 +30,12 @@ public class XmlBeanDefinitionReader {
 	private static final String NAME_ATTRIBUTE = "name";
 	private static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
 	private static final String TYPE_ATTRIBUTE = "type";
-	protected final Log logger = LogFactory.getLog(getClass());
+	public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
+
+	public static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
+
+	private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
+	private final Log logger = LogFactory.getLog(getClass());
 	private BeanDefinitionRegistry registry;
 
 	public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -45,16 +51,12 @@ public class XmlBeanDefinitionReader {
 			Element root = document.getRootElement();
 			for (Object obj : root.elements()) {
 				Element ele = (Element) obj;
-				String id = ele.attributeValue(ID_ATTRIBUTE);
-				String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
-				BeanDefinition bd = new GenericBeanDefinition(id,
-						beanClassName);
-				if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
-					bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+				String nameSpaceUri = ele.getNamespaceURI();
+				if (this.isDefaultNamespace(nameSpaceUri)) {
+					parseDefaultElement(ele);
+				} else if (this.isContextNamespace(nameSpaceUri)) {
+					parseComponentElement(ele);
 				}
-				parseConstructorArgElements(ele, bd);
-				parsePropertyElement(ele, bd);
-				this.registry.registerBeanDefinition(id, bd);
 			}
 		} catch (Exception e) {
 			throw new BeanDefinitionStoreException(
@@ -62,6 +64,35 @@ public class XmlBeanDefinitionReader {
 							+ resource.getDescription() + " ]",
 					e);
 		}
+	}
+
+	private void parseComponentElement(Element ele) {
+		String basePackages = ele.attributeValue(BASE_PACKAGE_ATTRIBUTE);
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(
+				registry);
+		scanner.doScan(basePackages);
+	}
+
+	private void parseDefaultElement(Element ele) {
+		String id = ele.attributeValue(ID_ATTRIBUTE);
+		String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
+		BeanDefinition bd = new GenericBeanDefinition(id, beanClassName);
+		if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
+			bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+		}
+		parseConstructorArgElements(ele, bd);
+		parsePropertyElement(ele, bd);
+		this.registry.registerBeanDefinition(id, bd);
+	}
+
+	private boolean isContextNamespace(String nameSpaceUri) {
+		return StrUtil.isEmpty(nameSpaceUri)
+				|| CONTEXT_NAMESPACE_URI.equals(nameSpaceUri);
+	}
+
+	private boolean isDefaultNamespace(String nameSpaceUri) {
+		return StrUtil.isEmpty(nameSpaceUri)
+				|| BEANS_NAMESPACE_URI.equals(nameSpaceUri);
 	}
 
 	private void parseConstructorArgElements(Element constructorEle,
@@ -74,13 +105,13 @@ public class XmlBeanDefinitionReader {
 	}
 
 	private void parseConstructorArgElement(Element ele, BeanDefinition bd) {
-		String typrAttr = ele.attributeValue(TYPE_ATTRIBUTE);
+		String typeAttr = ele.attributeValue(TYPE_ATTRIBUTE);
 		String nameAttr = ele.attributeValue(NAME_ATTRIBUTE);
 		Object value = parsePropertyValue(ele, bd, null);
 		ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder(
 				value);
-		if (!StrUtil.isEmpty(typrAttr)) {
-			valueHolder.setType(typrAttr);
+		if (!StrUtil.isEmpty(typeAttr)) {
+			valueHolder.setType(typeAttr);
 		}
 		if (!StrUtil.isEmpty(nameAttr)) {
 			valueHolder.setName(nameAttr);
