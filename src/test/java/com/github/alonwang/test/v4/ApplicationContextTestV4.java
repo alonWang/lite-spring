@@ -9,13 +9,13 @@ import org.junit.Test;
 /**
  * @author weilong.wang Created on 2018/7/13
  */
-public class ApplicationContextTest4 {
+public class ApplicationContextTestV4 {
 	@Test
 	public void testGetBeanProperty() {
 		ApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"petStore-v4.xml");
 		PetStoreService petStoreService = (PetStoreService) ctx
-				.getBean("petStore");
+				.getBean("petStoreService");
 
 		Assert.assertNotNull(petStoreService.getAccountDao());
 		Assert.assertNotNull(petStoreService.getItemDao());

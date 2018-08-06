@@ -1,7 +1,7 @@
 package com.github.alonwang.context;
 
-import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
+import com.github.alonwang.beans.factory.BeanFactory;
 
-public interface ApplicationContext extends ConfigurableBeanFactory {
+public interface ApplicationContext extends BeanFactory {
 
 }

@@ -7,18 +7,26 @@ import com.github.alonwang.beans.PropertyValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralBeanDefinition implements BeanDefinition {
+public class GenericBeanDefinition implements BeanDefinition {
 	private String id;
 	private String beanClassName;
 	private boolean singleton = true;
 	private boolean prototype = false;
+	private Class<?> beanClass;
 	private String scope = SCOPE_DEFAULT;
 	private List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
 	private ConstructorArgument constructorArgument = new ConstructorArgument();
 
-	public GeneralBeanDefinition(String id, String beanClassName) {
+	public GenericBeanDefinition(String id, String beanClassName) {
 		this.id = id;
 		this.beanClassName = beanClassName;
+	}
+
+	public GenericBeanDefinition() {
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public boolean hasConstructorArgumentValues() {
@@ -27,6 +35,10 @@ public class GeneralBeanDefinition implements BeanDefinition {
 
 	public String getBeanClassName() {
 		return this.beanClassName;
+	}
+
+	public void setBeanClassName(String beanClassName) {
+		this.beanClassName = beanClassName;
 	}
 
 	public boolean isSingleton() {
@@ -62,5 +74,29 @@ public class GeneralBeanDefinition implements BeanDefinition {
 
 	public String getID() {
 		return this.id;
+	}
+
+	public Class<?> resolveBeanClass(ClassLoader classLoader)
+			throws ClassNotFoundException {
+		String className = getBeanClassName();
+		if (className == null) {
+			return null;
+		}
+		Class<?> resolvedClass = classLoader.loadClass(className);
+		this.beanClass = resolvedClass;
+		return resolvedClass;
+	}
+
+	public Class<?> getBeanClass() throws IllegalStateException {
+		if (this.beanClass == null) {
+			throw new IllegalStateException(
+					"Bean class name [" + this.getBeanClassName()
+							+ "] has not been resolved into actual class");
+		}
+		return this.beanClass;
+	}
+
+	public boolean hasBeanClass() {
+		return this.beanClass != null;
 	}
 }
