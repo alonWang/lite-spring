@@ -20,7 +20,7 @@ public class ClassPathBeanDefinitionScannerTest {
         scanner.doScan(basePackages);
         String annotation= Component.class.getName();
         {
-            BeanDefinition bd = factory.getBeanDefinition("petStore");
+            BeanDefinition bd = factory.getBeanDefinition("petStoreService");
             Assert.assertTrue(bd instanceof ScannedGenericBeanDefinition);
             ScannedGenericBeanDefinition sbd = (ScannedGenericBeanDefinition)bd;
             AnnotationMetadata amd = sbd.getMetadata();

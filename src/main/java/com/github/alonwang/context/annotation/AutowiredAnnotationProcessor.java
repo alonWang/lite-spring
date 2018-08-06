@@ -2,10 +2,13 @@ package com.github.alonwang.context.annotation;
 
 import com.github.alonwang.beans.core.AnnotationUtils;
 import com.github.alonwang.beans.core.annotation.Autowired;
+import com.github.alonwang.beans.exception.BeanException;
+import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.annotation.AutowiredFieldElement;
 import com.github.alonwang.beans.factory.annotation.InjectionElement;
 import com.github.alonwang.beans.factory.annotation.InjectionMetadata;
 import com.github.alonwang.beans.factory.config.AutowiredCapableBeanFactory;
+import com.github.alonwang.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.github.alonwang.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -17,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class AutowiredAnnotationProcessor {
+public class AutowiredAnnotationProcessor implements InstantiationAwareBeanPostProcessor {
     private final Set<Class<? extends Annotation>> autowiredAnnotationTypes =
             new LinkedHashSet<Class<? extends Annotation>>();
     private AutowiredCapableBeanFactory beanFactory;
@@ -85,5 +88,31 @@ public class AutowiredAnnotationProcessor {
 
     public void setBeanFactory(AutowiredCapableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+    }
+
+    public Object beforeInstantiation(Class<?> beanClass, String beanName) throws BeanException {
+        return null;
+    }
+
+    public boolean afterInstantiation(Object bean, String beanName) throws BeanException {
+        return true;
+    }
+
+    public void postProcessPropertyValues(Object bean, String beanName) throws BeanException {
+        InjectionMetadata metadata = buildAutowiringMetadata(bean.getClass());
+        try {
+            metadata.inject(bean);
+        }
+        catch (Throwable ex) {
+            throw new BeanCreationException(beanName, "Injection of autowired dependencies failed", ex);
+        }
+    }
+
+    public Object beforeInitialization(Object bean, String beanName) throws BeanException {
+        return bean;
+    }
+
+    public Object afterInitialization(Object bean, String beanName) throws BeanException {
+        return bean;
     }
 }
