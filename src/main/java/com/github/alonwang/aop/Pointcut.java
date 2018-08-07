@@ -1,6 +1,6 @@
 package com.github.alonwang.aop;
 
-public interface PointCut {
+public interface Pointcut {
     MethodMatcher getMethodMatcher();
 
     String getExpression();

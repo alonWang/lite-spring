@@ -1,7 +1,7 @@
 package com.github.alonwang.aop.aspectj;
 
 import com.github.alonwang.aop.MethodMatcher;
-import com.github.alonwang.aop.PointCut;
+import com.github.alonwang.aop.Pointcut;
 import com.github.alonwang.util.ClassUtils;
 import com.github.alonwang.util.StringUtils;
 import org.aspectj.weaver.reflect.ReflectionWorld;
@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AspectJExpressionPointcut implements PointCut, MethodMatcher {
+public class AspectJExpressionPointcut implements Pointcut, MethodMatcher {
     private static final Set<PointcutPrimitive> SUPPORTED_PRIMITIVES = new HashSet<PointcutPrimitive>();
 
     static {

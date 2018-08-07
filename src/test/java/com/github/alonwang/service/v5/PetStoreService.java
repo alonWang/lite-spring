@@ -30,4 +30,7 @@ public class PetStoreService {
         MessageTracker.addMsg("place order");
 
     }
+    public void placeOrderWithException(){
+        throw new NullPointerException();
+    }
 }
