@@ -1,8 +1,13 @@
 package com.github.alonwang.beans.factory.support;
 
-import com.github.alonwang.beans.*;
+import com.github.alonwang.beans.BeanDefinition;
+import com.github.alonwang.beans.BeanDefinitionRegistry;
+import com.github.alonwang.beans.PropertyValue;
+import com.github.alonwang.beans.SimpleTypeConverter;
+import com.github.alonwang.beans.TypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
+import com.github.alonwang.beans.factory.NoSuchBeanDefinitionException;
 import com.github.alonwang.beans.factory.config.BeanPostProcessor;
 import com.github.alonwang.beans.factory.config.DependencyDescriptor;
 import com.github.alonwang.beans.factory.config.InstantiationAwareBeanPostProcessor;
@@ -61,7 +66,16 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 		return createBean(bd);
 	}
 
-	private Object createBean(BeanDefinition bd) {
+    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+        BeanDefinition bd=this.getBeanDefinition(name);
+        if (bd==null){
+            throw new NoSuchBeanDefinitionException(name);
+        }
+        resolveBeanClass(bd);
+        return bd.getBeanClass();
+    }
+
+    private Object createBean(BeanDefinition bd) {
 		Object bean = instantiateBean(bd);
 		populate(bd, bean);
 		return bean;

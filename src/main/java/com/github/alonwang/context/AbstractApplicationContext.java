@@ -2,6 +2,7 @@ package com.github.alonwang.context;
 
 import com.github.alonwang.beans.core.Resource;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
+import com.github.alonwang.beans.factory.NoSuchBeanDefinitionException;
 import com.github.alonwang.beans.factory.support.DefaultBeanFactory;
 import com.github.alonwang.context.annotation.AutowiredAnnotationProcessor;
 import com.github.alonwang.util.ClassUtils;
@@ -43,4 +44,8 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     protected abstract Resource getResource(String path);
+
+    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+        return this.factory.getType(name);
+    }
 }

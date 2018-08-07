@@ -3,9 +3,13 @@ package com.github.alonwang.aop.aspectj;
 import com.github.alonwang.aop.MethodMatcher;
 import com.github.alonwang.aop.PointCut;
 import com.github.alonwang.util.ClassUtils;
-import com.github.alonwang.util.StringUtil;
+import com.github.alonwang.util.StringUtils;
 import org.aspectj.weaver.reflect.ReflectionWorld;
-import org.aspectj.weaver.tools.*;
+import org.aspectj.weaver.tools.PointcutExpression;
+import org.aspectj.weaver.tools.PointcutParameter;
+import org.aspectj.weaver.tools.PointcutParser;
+import org.aspectj.weaver.tools.PointcutPrimitive;
+import org.aspectj.weaver.tools.ShadowMatch;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -113,9 +117,9 @@ public class AspectJExpressionPointcut implements PointCut, MethodMatcher {
 
 
     private String replaceBooleanOperators(String pcExpr) {
-        String result = StringUtil.replace(pcExpr, " and ", " && ");
-        result = StringUtil.replace(result, " or ", " || ");
-        result = StringUtil.replace(result, " not ", " ! ");
+        String result = StringUtils.replace(pcExpr, " and ", " && ");
+        result = StringUtils.replace(result, " or ", " || ");
+        result = StringUtils.replace(result, " not ", " ! ");
         return result;
     }
 }

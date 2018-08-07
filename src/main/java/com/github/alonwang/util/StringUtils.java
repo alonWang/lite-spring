@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class StringUtil {
+public class StringUtils {
 
     public static String[] tokenizeToStringArray(String str, String delimiters) {
         return tokenizeToStringArray(str, delimiters, true, true);
@@ -107,5 +107,12 @@ public class StringUtil {
             }
         }
         return sb.toString();
+    }
+
+    public static boolean hasLength(String str) {
+        return str != null && str.length() > 0;
+    }
+    public static boolean hasText(String str) {
+        return str != null && str.length() > 0;
     }
 }
