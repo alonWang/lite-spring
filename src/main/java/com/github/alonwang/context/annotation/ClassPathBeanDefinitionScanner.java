@@ -10,7 +10,7 @@ import com.github.alonwang.beans.factory.annotation.ScannedGenericBeanDefinition
 import com.github.alonwang.beans.factory.support.BeanNameGenerator;
 import com.github.alonwang.beans.factory.support.PackageResourceLoader;
 import com.github.alonwang.stereotype.Component;
-import com.github.alonwang.util.StringUtil;
+import com.github.alonwang.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,7 +29,7 @@ public class ClassPathBeanDefinitionScanner {
     }
 
     public Set<BeanDefinition> doScan(String packageToScan) {
-        String[] basePackages = StringUtil.tokenizeToStringArray(packageToScan, ",");
+        String[] basePackages = StringUtils.tokenizeToStringArray(packageToScan, ",");
         Set<BeanDefinition> beanDefinitions = new LinkedHashSet<BeanDefinition>();
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
