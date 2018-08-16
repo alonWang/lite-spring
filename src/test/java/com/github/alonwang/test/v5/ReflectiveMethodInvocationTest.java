@@ -3,9 +3,10 @@ package com.github.alonwang.test.v5;
 import com.github.alonwang.aop.aspectj.AspectJAfterReturningAdvice;
 import com.github.alonwang.aop.aspectj.AspectJAfterThrowingAdvice;
 import com.github.alonwang.aop.aspectj.AspectJBeforeAdvice;
+import com.github.alonwang.aop.config.AspectInstanceFactory;
 import com.github.alonwang.aop.framework.ReflectiveMethodInvocation;
+import com.github.alonwang.beans.factory.BeanFactory;
 import com.github.alonwang.service.v5.PetStoreService;
-import com.github.alonwang.tx.TransactionManager;
 import com.github.alonwang.util.MessageTracker;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Assert;
@@ -16,33 +17,37 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReflectiveMethodInvocationTest {
+public class ReflectiveMethodInvocationTest extends AbstractV5Test {
     private AspectJBeforeAdvice beforeAdvice = null;
     private AspectJAfterReturningAdvice afterAdvice = null;
     private AspectJAfterThrowingAdvice afterThrowingAdvice = null;
     private PetStoreService petStoreService = null;
-    private TransactionManager tx;
-
+	private BeanFactory beanFactory = null;
+	private AspectInstanceFactory aspectInstanceFactory = null;
     @Before
     public void setUp() throws Exception {
         petStoreService = new PetStoreService();
-        tx = new TransactionManager();
 
         MessageTracker.clearMsgs();
+
+		beanFactory = this.getBeanFactory("petStore-v5.xml");
+		aspectInstanceFactory = this.getAspectInstanceFactory("tx");
+		aspectInstanceFactory.setBeanFactory(beanFactory);
+
         beforeAdvice = new AspectJBeforeAdvice(
-                TransactionManager.class.getMethod("start"),
+				this.getAdviceMethod("start"),
                 null,
-                tx);
+				aspectInstanceFactory);
 
         afterAdvice = new AspectJAfterReturningAdvice(
-                TransactionManager.class.getMethod("commit"),
+				this.getAdviceMethod("commit"),
                 null,
-                tx);
+				aspectInstanceFactory);
 
         afterThrowingAdvice = new AspectJAfterThrowingAdvice(
-                TransactionManager.class.getMethod("rollback"),
+				this.getAdviceMethod("rollback"),
                 null,
-                tx
+				aspectInstanceFactory
         );
 
     }
