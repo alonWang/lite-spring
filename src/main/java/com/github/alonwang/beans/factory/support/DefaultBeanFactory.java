@@ -6,7 +6,7 @@ import com.github.alonwang.beans.PropertyValue;
 import com.github.alonwang.beans.SimpleTypeConverter;
 import com.github.alonwang.beans.TypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
-import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
+import com.github.alonwang.beans.factory.BeanFactoryAware;
 import com.github.alonwang.beans.factory.NoSuchBeanDefinitionException;
 import com.github.alonwang.beans.factory.config.BeanPostProcessor;
 import com.github.alonwang.beans.factory.config.DependencyDescriptor;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
-		implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory extends AbstractBeanFactory
+		implements BeanDefinitionRegistry {
 	private List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
 	private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>(
 			64);
@@ -50,6 +50,25 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 
 	}
 
+	public List<Object> getBeansByType(Class<?> type) {
+		List<Object> result = new ArrayList<Object>();
+		List<String> beanIDs = this.getBeanIDsByType(type);
+		for (String beanID : beanIDs) {
+			result.add(this.getBean(beanID));
+		}
+		return result;
+	}
+
+	private List<String> getBeanIDsByType(Class<?> type) {
+		List<String> result = new ArrayList<String>();
+		for (String beanName : this.beanDefinitionMap.keySet()) {
+			if (type.isAssignableFrom(this.getType(beanName))) {
+				result.add(beanName);
+			}
+		}
+		return result;
+	}
+
 	public Object getBean(String beanID) {
 		BeanDefinition bd = this.beanDefinitionMap.get(beanID);
 		if (bd == null) {
@@ -66,26 +85,40 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 		return createBean(bd);
 	}
 
-    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
-        BeanDefinition bd=this.getBeanDefinition(name);
-        if (bd==null){
-            throw new NoSuchBeanDefinitionException(name);
-        }
-        resolveBeanClass(bd);
-        return bd.getBeanClass();
-    }
+	public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+		BeanDefinition bd = this.getBeanDefinition(name);
+		if (bd == null) {
+			throw new NoSuchBeanDefinitionException(name);
+		}
+		resolveBeanClass(bd);
+		return bd.getBeanClass();
+	}
 
-    private Object createBean(BeanDefinition bd) {
+	protected Object createBean(BeanDefinition bd) {
 		Object bean = instantiateBean(bd);
 		populate(bd, bean);
+		bean = initializeBean(bd, bean);
 		return bean;
 
 	}
 
+	protected Object initializeBean(BeanDefinition bd, Object bean) {
+		invokeAwareMethods(bean);
+		// Todo，对Bean做初始化
+		// 创建代理
+		return bean;
+	}
+
+	private void invokeAwareMethods(final Object bean) {
+		if (bean instanceof BeanFactoryAware) {
+			((BeanFactoryAware) bean).setBeanFactory(this);
+		}
+	}
 	protected void populate(BeanDefinition bd, Object bean) {
-		for(BeanPostProcessor processor : this.getBeanPostProcessors()){
-			if(processor instanceof InstantiationAwareBeanPostProcessor){
-				((InstantiationAwareBeanPostProcessor)processor).postProcessPropertyValues(bean, bd.getID());
+		for (BeanPostProcessor processor : this.getBeanPostProcessors()) {
+			if (processor instanceof InstantiationAwareBeanPostProcessor) {
+				((InstantiationAwareBeanPostProcessor) processor)
+						.postProcessPropertyValues(bean, bd.getID());
 			}
 		}
 		List<PropertyValue> pvs = bd.getPropertyValues();
@@ -164,9 +197,11 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 		}
 
 	}
-	public void addBeanPostProcessor(BeanPostProcessor postProcessor){
+
+	public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
 		this.beanPostProcessors.add(postProcessor);
 	}
+
 	public List<BeanPostProcessor> getBeanPostProcessors() {
 		return this.beanPostProcessors;
 	}

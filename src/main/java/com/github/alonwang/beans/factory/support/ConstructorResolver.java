@@ -5,7 +5,6 @@ import com.github.alonwang.beans.ConstructorArgument;
 import com.github.alonwang.beans.SimpleTypeConverter;
 import com.github.alonwang.beans.TypeConverter;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
-import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,9 +16,9 @@ import java.util.List;
  */
 public class ConstructorResolver {
 	protected final Log logger = LogFactory.getLog(getClass());
-	private final ConfigurableBeanFactory beanFactory;
+	private final AbstractBeanFactory beanFactory;
 
-	public ConstructorResolver(ConfigurableBeanFactory beanFactory) {
+	public ConstructorResolver(AbstractBeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
