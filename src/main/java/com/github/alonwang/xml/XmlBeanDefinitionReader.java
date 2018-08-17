@@ -1,6 +1,7 @@
 package com.github.alonwang.xml;
 
 import cn.hutool.core.util.StrUtil;
+import com.github.alonwang.aop.config.ConfigBeanDefinitionParser;
 import com.github.alonwang.beans.BeanDefinition;
 import com.github.alonwang.beans.BeanDefinitionRegistry;
 import com.github.alonwang.beans.ConstructorArgument;
@@ -11,6 +12,7 @@ import com.github.alonwang.beans.factory.TypedStringValue;
 import com.github.alonwang.beans.factory.config.RuntimeBeanReference;
 import com.github.alonwang.beans.factory.support.GenericBeanDefinition;
 import com.github.alonwang.context.annotation.ClassPathBeanDefinitionScanner;
+import com.github.alonwang.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -31,7 +33,7 @@ public class XmlBeanDefinitionReader {
 	private static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
 	private static final String TYPE_ATTRIBUTE = "type";
 	public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
-
+	public static final String AOP_NAMESPACE_URI = "http://www.springframework.org/schema/aop";
 	public static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
 
 	private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
@@ -56,6 +58,8 @@ public class XmlBeanDefinitionReader {
 					parseDefaultElement(ele);
 				} else if (this.isContextNamespace(nameSpaceUri)) {
 					parseComponentElement(ele);
+				} else if (this.isAOPNamespace(nameSpaceUri)) {
+					parseAOPElement(ele); // 例如 <aop:config>
 				}
 			}
 		} catch (Exception e) {
@@ -64,6 +68,16 @@ public class XmlBeanDefinitionReader {
 							+ resource.getDescription() + " ]",
 					e);
 		}
+	}
+
+	private void parseAOPElement(Element ele) {
+		ConfigBeanDefinitionParser parser = new ConfigBeanDefinitionParser();
+		parser.parse(ele, this.registry);
+	}
+
+	public boolean isAOPNamespace(String namespaceUri) {
+		return (!StringUtils.hasLength(namespaceUri)
+				|| AOP_NAMESPACE_URI.equals(namespaceUri));
 	}
 
 	private void parseComponentElement(Element ele) {

@@ -34,4 +34,6 @@ public interface BeanDefinition {
 
 	boolean hasBeanClass();
 
+	public boolean isSynthetic();
+
 }

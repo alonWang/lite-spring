@@ -12,6 +12,7 @@ public class GenericBeanDefinition implements BeanDefinition {
 	private String beanClassName;
 	private boolean singleton = true;
 	private boolean prototype = false;
+	private boolean synthetic = false;
 	private Class<?> beanClass;
 	private String scope = SCOPE_DEFAULT;
 	private List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
@@ -23,6 +24,11 @@ public class GenericBeanDefinition implements BeanDefinition {
 	}
 
 	public GenericBeanDefinition() {
+	}
+
+	public GenericBeanDefinition(Class<?> clz) {
+		this.beanClass = clz;
+		this.beanClassName = clz.getName();
 	}
 
 	public void setId(String id) {
@@ -74,6 +80,14 @@ public class GenericBeanDefinition implements BeanDefinition {
 
 	public String getID() {
 		return this.id;
+	}
+
+	public boolean isSynthetic() {
+		return synthetic;
+	}
+
+	public void setSynthetic(boolean synthetic) {
+		this.synthetic = synthetic;
 	}
 
 	public Class<?> resolveBeanClass(ClassLoader classLoader)
