@@ -1,5 +1,6 @@
 package com.github.alonwang.context;
 
+import com.github.alonwang.aop.aspectj.AspectJAutoProxyCreator;
 import com.github.alonwang.beans.core.Resource;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import com.github.alonwang.beans.factory.NoSuchBeanDefinitionException;
@@ -41,9 +42,16 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 	protected void registerBeanPostProcessors(
 			ConfigurableBeanFactory beanFactory) {
 
-		AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
-		postProcessor.setBeanFactory(beanFactory);
-		beanFactory.addBeanPostProcessor(postProcessor);
+		{
+			AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+			postProcessor.setBeanFactory(beanFactory);
+			beanFactory.addBeanPostProcessor(postProcessor);
+		}
+		{
+			AspectJAutoProxyCreator postProcessor = new AspectJAutoProxyCreator();
+			postProcessor.setBeanFactory(beanFactory);
+			beanFactory.addBeanPostProcessor(postProcessor);
+		}
 
 	}
 

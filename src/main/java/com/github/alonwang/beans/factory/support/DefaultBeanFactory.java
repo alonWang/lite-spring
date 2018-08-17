@@ -5,6 +5,7 @@ import com.github.alonwang.beans.BeanDefinitionRegistry;
 import com.github.alonwang.beans.PropertyValue;
 import com.github.alonwang.beans.SimpleTypeConverter;
 import com.github.alonwang.beans.TypeConverter;
+import com.github.alonwang.beans.exception.BeanException;
 import com.github.alonwang.beans.exception.general.BeanCreationException;
 import com.github.alonwang.beans.factory.BeanFactoryAware;
 import com.github.alonwang.beans.factory.NoSuchBeanDefinitionException;
@@ -104,9 +105,23 @@ public class DefaultBeanFactory extends AbstractBeanFactory
 
 	protected Object initializeBean(BeanDefinition bd, Object bean) {
 		invokeAwareMethods(bean);
-		// Todo，对Bean做初始化
-		// 创建代理
+		if (!bd.isSynthetic()) {
+			return applyBeanPostProcessorsAfterInitialization(bean, bd.getID());
+		}
 		return bean;
+	}
+
+	public Object applyBeanPostProcessorsAfterInitialization(
+			Object existingBean, String beanName) throws BeanException {
+
+		Object result = existingBean;
+		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+			result = beanProcessor.afterInitialization(result, beanName);
+			if (result == null) {
+				return result;
+			}
+		}
+		return result;
 	}
 
 	private void invokeAwareMethods(final Object bean) {
@@ -114,6 +129,7 @@ public class DefaultBeanFactory extends AbstractBeanFactory
 			((BeanFactoryAware) bean).setBeanFactory(this);
 		}
 	}
+
 	protected void populate(BeanDefinition bd, Object bean) {
 		for (BeanPostProcessor processor : this.getBeanPostProcessors()) {
 			if (processor instanceof InstantiationAwareBeanPostProcessor) {
