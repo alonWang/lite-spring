@@ -6,6 +6,7 @@ import com.github.alonwang.aop.Pointcut;
 import com.github.alonwang.aop.framework.AopConfigSupport;
 import com.github.alonwang.aop.framework.AopProxyFactory;
 import com.github.alonwang.aop.framework.CglibProxyFactory;
+import com.github.alonwang.aop.framework.JdkAopProxyFactory;
 import com.github.alonwang.beans.exception.BeanException;
 import com.github.alonwang.beans.factory.ConfigurableBeanFactory;
 import com.github.alonwang.beans.factory.config.BeanPostProcessor;
@@ -94,8 +95,7 @@ public class AspectJAutoProxyCreator implements BeanPostProcessor {
 		if (config.getProxiedInterfaces().length == 0) {
 			proxyFactory = new CglibProxyFactory(config);
 		} else {
-			// TODO 需要实现JDK 代理
-			// proxyFactory = new JdkAopProxyFactory(config);
+			proxyFactory = new JdkAopProxyFactory(config);
 		}
 
 		return proxyFactory.getProxy();
